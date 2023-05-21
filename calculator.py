@@ -71,26 +71,26 @@ def extract_complicated_func(input_str:str):
             subexpression = subexpression.replace(' ', '')
             subexpressions.append(subexpression)
 
+            if 'integrate' in subexpression:
+                temp = subexpression[10:-1].split(',')
+                print(temp)
+                res = integrate(str(temp[0]), str(temp[1]), str(temp[2]))
+                input_str = input_str.replace(subexpression, str(res))
+
+            if 'diff' in subexpression:
+                temp = subexpression[5:-1].split(',')
+                res = diff(str(temp[0]), str(temp[1]))
+                input_str = input_str.replace(subexpression, str(res))
 
     print(subexpressions)
-    for subexpression in subexpressions:
-        if 'integrate' in subexpression:
-            temp = subexpression[10:-1].split(',')
-            print(temp)
-            res = integrate(str(temp[0]), str(temp[1]), str(temp[2]))
-            input_str = input_str.replace(subexpression, str(res))
 
-        if 'diff' in subexpression:
-            temp = subexpression[5:-1].split(',')
-            res = diff(str(temp[0]), str(temp[1]))
-            input_str = input_str.replace(subexpression, str(res))
     return input_str
 
 
 
 def integrate(input_str, lower, upper):
 
-    f = lambda x: eval(str(input_str))
+    f = lambda x: eval(input_str)
     lower = eval(lower)
     upper = eval(upper)
     S = 0
