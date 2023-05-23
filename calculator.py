@@ -16,19 +16,21 @@ import ast
 temp_exp = ''
 ask_iks = False
 iks = 0
+
+# функция вычисление преобразованной строки с помощью eval
 def execute(input_str):
     try:
         if input_str == 'x=?':
             return 'x=?'
 
-        return round(eval(input_str), 5)
+        return round(eval(input_str),8)
     except ZeroDivisionError:
         return 'Деление на ноль'
     except:
         return 'что-то пошло не так'
 
 
-
+# Функция приведения введенной строки к пригодному для вычисления виду
 def translator(input_str : str):
     global temp_exp, ask_iks, iks
     try:
@@ -39,6 +41,8 @@ def translator(input_str : str):
         if 'pi' in input_str: input_str = input_str.replace('pi', f'{pi}')
         if 'd/dx' in input_str: input_str = input_str.replace('d/dx', 'diff')
         if '∫' in input_str: input_str = input_str.replace('∫', 'integrate')
+
+        # Если Х используется без операторов интегрирования или дифференцирования, программа "спрашивает" чему он равен
         if 'x' in input_str and 'integrate' not in input_str and 'diff' not in input_str:
             temp_exp = input_str
             ask_iks = True
@@ -54,7 +58,7 @@ def translator(input_str : str):
         return 'Что-то пошло не так'
 
 
-
+# Функция вычленения из строки интеграллов и производных для их расчета
 def extract_complicated_func(input_str:str):
 
     subexpressions = []
@@ -87,25 +91,40 @@ def extract_complicated_func(input_str:str):
     return input_str
 
 
-
+# Функция численного интегрирования методом Симпсона, уточненным методом Рунге
 def integrate(input_str, lower, upper):
 
     f = lambda x: eval(input_str)
     lower = eval(lower)
     upper = eval(upper)
+
+    N = 2
+    dx = (upper - lower)/N
     S = 0
-    dx = (upper - lower)/500
+    s = 0
+    h = (upper-lower)/(4*N)
+    h2 = h/2
+    print(h2, h)
 
-    for i in range(500):
-        S += dx * (f(lower + dx * i)+f(lower + dx * (i+1)))/2
+    for i in range(N):
+        s = s + h2 / 3 * (f(lower + i*dx) + 4 * f(lower + i*dx + h2)
+                         + 2 * f(lower + i*dx + 2 * h2) + 4 * f(lower + i*dx + 3 * h2)
+                         + 2 * f(lower + i*dx + 4*h2) + 4 * f(lower + i*dx + 5 * h2)
+                         + 2 * f(lower + i * dx + 6 * h2) + 4 * f(lower + i * dx + 7 * h2)
+                         + f(lower + i * dx + 8 * h2))
+        S = S + h / 3 * (f(lower + i*dx) + 4 * f(lower + i*dx + h) + 2 * f(lower + i*dx + 2 * h) + 4 * f(lower + i*dx + 3 * h) + f(lower + i*dx + 4*h))
+        print(s, S)
 
-    return round(S, 5)
 
+    return s + (s-S)/15
+
+
+# Функция численного дифференецирования методом конечной разности с использованием центральной разности
 def diff(func:str, arg):
     f = lambda x: eval(func)
     arg = eval(arg)
     dx = 0.000001
-    return round((f(arg + dx)-f(arg))/dx, 5)
+    return round((f(arg + dx)-f(arg - dx))/(2*dx), 7)
 
 
 is_first = True
@@ -114,13 +133,3 @@ prev_ans = 0
 
 
 
-def main():
-    while True:
-        a = input()
-        eval(translator(a))
-        res = round(eval(translator(a)), 9)
-        print(res)
-
-
-if __name__ == '__main__':
-    main()
