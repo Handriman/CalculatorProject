@@ -78,7 +78,10 @@ def extract_complicated_func(input_str:str):
             if 'integrate' in subexpression:
                 temp = subexpression[10:-1].split(',')
                 print(temp)
-                res = integrate(str(temp[0]), str(temp[1]), str(temp[2]))
+                if len(temp) == 3:
+                    res = integrate(str(temp[0]), str(temp[1]), str(temp[2]))
+                if len(temp) == 4:
+                    res = integrate(str(temp[0]), str(temp[1]), str(temp[2]), str(temp[3]))
                 input_str = input_str.replace(subexpression, str(res))
 
             if 'diff' in subexpression:
@@ -92,13 +95,13 @@ def extract_complicated_func(input_str:str):
 
 
 # Функция численного интегрирования методом Симпсона, уточненным методом Рунге
-def integrate(input_str, lower, upper):
+def integrate(input_str, lower, upper, N='4'):
 
     f = lambda x: eval(input_str)
     lower = eval(lower)
     upper = eval(upper)
 
-    N = 2
+    N = eval(N)
     dx = (upper - lower)/N
     S = 0
     s = 0

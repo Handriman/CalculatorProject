@@ -16,6 +16,7 @@ from calculator import *
 
 # создаем окно
 window = tk.Tk()
+window.resizable(0,0)
 
 
 # функция обновления строки ввода, которая вызывает функцию-обработчик кнопок
@@ -56,6 +57,7 @@ def btn_handler(a):
         enter.insert(tk.INSERT, str(prev_ans))
         return
     enter.insert(tk.INSERT, a)
+
 
 # функция кнопки стирания одного символа
 def btn_del():
